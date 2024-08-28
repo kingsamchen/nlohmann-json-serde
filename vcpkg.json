@@ -1,0 +1,7 @@
+{
+  "name": "nlohmann-json-serde",
+  "version": "0.1.0",
+  "dependencies": [
+    "doctest"
+  ]
+}
