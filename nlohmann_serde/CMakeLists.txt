@@ -13,6 +13,8 @@ target_include_directories(nlohmann_serde
 )
 
 target_link_libraries(nlohmann_serde
+  INTERFACE
+    nlohmann_json::nlohmann_json
 )
 
 target_compile_definitions(nlohmann_serde

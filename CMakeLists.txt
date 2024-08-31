@@ -66,6 +66,8 @@ endif()
 include(${NLOHMANN_JSON_SERDE_CMAKE_DIR}/clang_tidy.cmake)
 include(${NLOHMANN_JSON_SERDE_CMAKE_DIR}/sanitizer.cmake)
 
+find_package(nlohmann_json CONFIG REQUIRED)
+
 add_subdirectory(nlohmann_serde)
 
 if(NLOHMANN_JSON_SERDE_NOT_SUBPROJECT AND BUILD_TESTING)

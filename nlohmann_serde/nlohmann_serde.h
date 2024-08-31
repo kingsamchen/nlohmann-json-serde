@@ -3,3 +3,5 @@
 // in the LICENSE file.
 
 #pragma once
+
+#include "nlohmann_serde/macros.h"
