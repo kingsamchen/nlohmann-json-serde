@@ -1,10 +1,12 @@
 
-
 add_executable(nlohmann_serde_test)
 
 target_sources(nlohmann_serde_test
   PRIVATE
     test_main.cpp
+    stringification.h
+
+    serde_test.cpp
 )
 
 target_link_libraries(nlohmann_serde_test
