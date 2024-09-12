@@ -4,6 +4,9 @@ add_library(nlohmann_serde INTERFACE)
 target_sources(nlohmann_serde
   PRIVATE
     nlohmann_serde.h
+
+    macros.h
+    serde_options.h
 )
 
 target_include_directories(nlohmann_serde
