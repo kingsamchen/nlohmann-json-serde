@@ -4,6 +4,7 @@
 
 #include <cstdint>
 #include <string>
+#include <unordered_map>
 #include <vector>
 
 #include "doctest/doctest.h"
@@ -12,6 +13,8 @@
 #include "tests/stringification.h"
 
 #include "nlohmann_serde/nlohmann_serde.h"
+
+namespace serde = nlohmann::serde;
 
 namespace {
 struct message_basic {
@@ -164,6 +167,105 @@ TEST_CASE("JSON has fewer fields and struct's extra fields should remain unchang
     CHECK_EQ(msg.seq_, 42);
     CHECK_EQ(msg.ts_, 1024);
     CHECK_EQ(msg.parts_, std::vector<std::string>{"hello", "world", "serde test"});
+}
+
+struct foobar_omit_empty {
+    struct inner {
+        std::string s;
+        NLOHMANN_SERDE_DERIVE_TYPE(inner, (s, "s", serde::with(serde::omit_empty)))
+    };
+
+    int i{0};
+    bool b{false};
+    double d{0.};
+    std::string str;
+    std::vector<int> vec;
+    std::unordered_map<int, std::string> map;
+    inner inner;
+
+    NLOHMANN_SERDE_DERIVE_TYPE(foobar_omit_empty,
+                               (i, "int", serde::with(serde::omit_empty))
+                               (b, "boolean", serde::with(serde::omit_empty))
+                               (d, "double", serde::with(serde::omit_empty))
+                               (str, "string", serde::with(serde::omit_empty))
+                               (vec, "array", serde::with(serde::omit_empty))
+                               (map, "objectFromMap", serde::with(serde::omit_empty))
+                               (inner, "object", serde::with(serde::omit_empty)))
+};
+
+// The `omit_empty` option chooses to behave like Java's jackson omit empty annotation, which
+// is kind of different from behavior of Golang & protobuf:
+//  - ignored for number types, i.e. integer, boolean, floating points.
+//  - omit fields whose value are empty string, empty array, or empty object
+
+TEST_CASE("Omit non-trivial empty type when serialize a struct into JSON") {
+    const foobar_omit_empty foobar;
+    CHECK_EQ(foobar.i, 0);
+    CHECK_EQ(foobar.b, false);
+    CHECK_EQ(foobar.d, 0.);
+    CHECK(foobar.str.empty());
+    CHECK(foobar.vec.empty());
+    CHECK(foobar.map.empty());
+    CHECK(foobar.inner.s.empty());
+
+    // By default nlohamnn json uses alphabet order.
+    // Number primitives are preserved anyway, and since `Inner` has only one
+    // string field and its also empty, so recursively, it will be omitted as
+    // well.
+    const std::string expected_json_str =
+            R"({"boolean":false,"double":0.0,"int":0})";
+    auto j = nlohmann::json(foobar);
+    REQUIRE_EQ(j.dump(), expected_json_str);
+}
+
+struct foobar_stringify_int {
+    std::int64_t n{0};
+
+    NLOHMANN_SERDE_DERIVE_TYPE(foobar_stringify_int,
+                               (n, "n", serde::with(serde::stringify_int64)))
+};
+
+TEST_CASE("Stringify int64 value in serialization and convert back in deserialization") {
+    foobar_stringify_int foobar;
+    REQUIRE_EQ(foobar.n, 0);
+
+    const auto j = R"({"n": "10240"})"_json;
+    j.get_to(foobar);
+    CHECK_EQ(foobar.n, 10240);
+}
+
+// Use custom action
+
+struct stringify_with_default_value_t : serde::action_base<stringify_with_default_value_t> {
+    [[nodiscard]] static std::string serialize_impl(std::int64_t m_value) {
+        return std::to_string(m_value);
+    }
+
+    [[nodiscard]] static std::int64_t deserialize_impl(const std::string& j_value) {
+        try {
+            return std::stoll(j_value);
+        } catch (const std::exception& ex) {
+            return 0;
+        }
+    }
+};
+
+inline const stringify_with_default_value_t stringify_with_default_value;
+
+struct foobar_stringify_with_default {
+    std::int64_t n{0};
+
+    NLOHMANN_SERDE_DERIVE_TYPE(foobar_stringify_with_default,
+                               (n, "n", serde::with(stringify_with_default_value)))
+};
+
+TEST_CASE("Use default value if error occurred in deserialization from string") {
+    foobar_stringify_with_default foobar{42};
+    REQUIRE_EQ(foobar.n, 42);
+
+    const auto j = R"({"n": "abcd"})"_json;
+    j.get_to(foobar);
+    CHECK_EQ(foobar.n, 0);
 }
 
 } // namespace

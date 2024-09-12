@@ -5,10 +5,10 @@
 #pragma once
 
 #define NLOHMANN_F_SER_OPTS(member, name, opts) \
-    {}
+    { nlohmann::serde::serialize_with_opts(j, name, m.member, opts); }
 
 #define NLOHMANN_F_DE_OPTS(member, name, opts) \
-    {}
+    { nlohmann::serde::deserialize_with_opts(j, name, m.member, opts); }
 
 #define NLOHMANN_F_SER(member, name) \
     { j[name] = m.member; }

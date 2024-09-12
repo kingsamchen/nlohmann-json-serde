@@ -6,6 +6,7 @@ target_sources(nlohmann_serde_test
     test_main.cpp
     stringification.h
 
+    options_detail_test.cpp
     serde_test.cpp
 )
 

@@ -5,3 +5,4 @@
 #pragma once
 
 #include "nlohmann_serde/macros.h"
+#include "nlohmann_serde/serde_options.h"
