@@ -241,9 +241,9 @@ struct stringify_with_default_value_t : serde::action_base<stringify_with_defaul
         return std::to_string(m_value);
     }
 
-    [[nodiscard]] static std::int64_t deserialize_impl(const std::string& j_value) {
+    [[nodiscard]] static std::int64_t deserialize_impl(const nlohmann::json& j_value) {
         try {
-            return std::stoll(j_value);
+            return std::stoll(j_value.get_ref<const std::string&>());
         } catch (const std::exception& ex) {
             return 0;
         }

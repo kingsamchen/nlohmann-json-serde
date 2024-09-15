@@ -4,5 +4,10 @@
   "dependencies": [
     "doctest",
     "nlohmann-json"
-  ]
+  ],
+  "vcpkg-configuration": {
+    "overlay-ports": [
+      "./build/vcpkg-overlay/ports"
+    ]
+  }
 }
