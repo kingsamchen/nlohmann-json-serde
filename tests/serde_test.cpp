@@ -53,11 +53,11 @@ TEST_CASE("Serialize and deserialize basic structs") {
     CHECK_EQ(msg.parts_, parts);
 }
 
-struct digest {
+struct message_digest {
     int length{0};
     std::string algorithm;
 
-    NLOHMANN_SERDE_DERIVE_TYPE(digest,
+    NLOHMANN_SERDE_DERIVE_TYPE(message_digest,
                                (length, "length")
                                (algorithm, "algorithm"))
 };
@@ -66,7 +66,7 @@ struct message_with_digest {
     int seq{0};
     std::int64_t ts{0};
     std::vector<std::string> parts;
-    digest digest;
+    message_digest digest;
 
     NLOHMANN_SERDE_DERIVE_TYPE(message_with_digest,
                                (seq, "seq")
