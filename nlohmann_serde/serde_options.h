@@ -19,12 +19,11 @@ namespace nlohmann::serde {
 template<typename Impl>
 struct filter_base {
     template<typename T>
-    bool on_serialize(const T& m_value) const {
+    [[nodiscard]] bool on_serialize(const T& m_value) const {
         return static_cast<const Impl*>(this)->on_serialize_impl(m_value);
     }
 
-    template<typename T>
-    bool on_deserialize(const T& j_value) const {
+    [[nodiscard]] bool on_deserialize(const nlohmann::json& j_value) const {
         return static_cast<const Impl*>(this)->on_deserialize_impl(j_value);
     }
 };
@@ -33,7 +32,7 @@ class omit_empty_t : public filter_base<omit_empty_t> {
     friend filter_base;
 
     template<typename T>
-    bool on_serialize_impl(const T& m_value) const {
+    [[nodiscard]] static bool on_serialize_impl(const T& m_value) {
         using value_type = std::remove_cv_t<T>;
         if constexpr (std::is_integral_v<value_type>) {
             return false;
@@ -46,8 +45,7 @@ class omit_empty_t : public filter_base<omit_empty_t> {
         }
     }
 
-    template<typename T>
-    bool on_deserialize_impl(const T& /* j_value */) const {
+    [[nodiscard]] static bool on_deserialize_impl(const nlohmann::json& /* j_value */) {
         return false;
     }
 };
@@ -61,12 +59,11 @@ inline constexpr auto omit_empty = omit_empty_t{};
 template<typename Impl>
 struct action_base {
     template<typename T>
-    auto serialize(const T& m_value) const {
+    [[nodiscard]] auto serialize(const T& m_value) const {
         return static_cast<const Impl*>(this)->serialize_impl(m_value);
     }
 
-    template<typename T>
-    auto deserialize(const T& j_value) const {
+    [[nodiscard]] auto deserialize(const nlohmann::json& j_value) const {
         return static_cast<const Impl*>(this)->deserialize_impl(j_value);
     }
 };
@@ -78,8 +75,8 @@ class stringify_int64_t : public action_base<stringify_int64_t> {
         return std::to_string(m_value);
     }
 
-    [[nodiscard]] static std::int64_t deserialize_impl(const std::string& j_value) {
-        return std::stoll(j_value);
+    [[nodiscard]] static std::int64_t deserialize_impl(const nlohmann::json& j_value) {
+        return std::stoll(j_value.get_ref<const std::string&>());
     }
 };
 
