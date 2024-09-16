@@ -82,10 +82,10 @@
     (F_DE, ##__VA_ARGS__)
 
 //
-// Derive type.
+// Derive type serde.
 //
 
-#define NLOHMANN_SERDE_DERIVE_TYPE(type, ...)                 \
+#define NLOHMANN_SERDE_DERIVED(type, ...)                     \
     friend void to_json(nlohmann::json& j, const type& m) {   \
         NLOHMANN_SERDE_EXPAND_F_SER_A __VA_ARGS__();          \
         if (j.is_null()) {                                    \
