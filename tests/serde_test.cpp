@@ -10,7 +10,7 @@
 #include "doctest/doctest.h"
 #include "nlohmann/json.hpp"
 
-#include "tests/stringification.h"
+#include "tests/stringification.h" // IWYU pragma: keep
 
 #include "nlohmann_serde/nlohmann_serde.h"
 
