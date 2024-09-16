@@ -4,5 +4,5 @@
 
 #pragma once
 
-#include "nlohmann_serde/macros.h"
-#include "nlohmann_serde/serde_options.h"
+#include "nlohmann_serde/macros.h"        // IWYU pragma: export
+#include "nlohmann_serde/serde_options.h" // IWYU pragma: export
