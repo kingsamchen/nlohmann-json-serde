@@ -37,7 +37,7 @@ RequiresClausePosition: OwnLine
 ShortNamespaceLines: 0
 SpaceAfterTemplateKeyword: false
 SpaceBeforeParens: ControlStatementsExceptControlMacros
-WhitespaceSensitiveMacros: [NLOHMANN_SERDE_DERIVE_TYPE]
+WhitespaceSensitiveMacros: [NLOHMANN_SERDE_DERIVED]
 
 ---
 Language: Json

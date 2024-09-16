@@ -22,10 +22,10 @@ struct message_basic {
     std::int64_t ts_{0};
     std::vector<std::string> parts_;
 
-    NLOHMANN_SERDE_DERIVE_TYPE(message_basic,
-                               (seq_, "seq")
-                               (ts_, "ts")
-                               (parts_, "parts"))
+    NLOHMANN_SERDE_DERIVED(message_basic,
+                           (seq_, "seq")
+                           (ts_, "ts")
+                           (parts_, "parts"))
 };
 
 TEST_CASE("Serialize and deserialize basic structs") {
@@ -57,9 +57,9 @@ struct message_digest {
     int length{0};
     std::string algorithm;
 
-    NLOHMANN_SERDE_DERIVE_TYPE(message_digest,
-                               (length, "length")
-                               (algorithm, "algorithm"))
+    NLOHMANN_SERDE_DERIVED(message_digest,
+                           (length, "length")
+                           (algorithm, "algorithm"))
 };
 
 struct message_with_digest {
@@ -68,11 +68,11 @@ struct message_with_digest {
     std::vector<std::string> parts;
     message_digest digest;
 
-    NLOHMANN_SERDE_DERIVE_TYPE(message_with_digest,
-                               (seq, "seq")
-                               (ts, "ts")
-                               (parts, "parts")
-                               (digest, "digest"))
+    NLOHMANN_SERDE_DERIVED(message_with_digest,
+                           (seq, "seq")
+                           (ts, "ts")
+                           (parts, "parts")
+                           (digest, "digest"))
 };
 
 TEST_CASE("Support objects and its member objects") {
@@ -172,7 +172,7 @@ TEST_CASE("JSON has fewer fields and struct's extra fields should remain unchang
 struct foobar_omit_empty {
     struct inner {
         std::string s;
-        NLOHMANN_SERDE_DERIVE_TYPE(inner, (s, "s", serde::with(serde::omit_empty)))
+        NLOHMANN_SERDE_DERIVED(inner, (s, "s", serde::with(serde::omit_empty)))
     };
 
     int i{0};
@@ -183,14 +183,14 @@ struct foobar_omit_empty {
     std::unordered_map<int, std::string> map;
     inner inner;
 
-    NLOHMANN_SERDE_DERIVE_TYPE(foobar_omit_empty,
-                               (i, "int", serde::with(serde::omit_empty))
-                               (b, "boolean", serde::with(serde::omit_empty))
-                               (d, "double", serde::with(serde::omit_empty))
-                               (str, "string", serde::with(serde::omit_empty))
-                               (vec, "array", serde::with(serde::omit_empty))
-                               (map, "objectFromMap", serde::with(serde::omit_empty))
-                               (inner, "object", serde::with(serde::omit_empty)))
+    NLOHMANN_SERDE_DERIVED(foobar_omit_empty,
+                           (i, "int", serde::with(serde::omit_empty))
+                           (b, "boolean", serde::with(serde::omit_empty))
+                           (d, "double", serde::with(serde::omit_empty))
+                           (str, "string", serde::with(serde::omit_empty))
+                           (vec, "array", serde::with(serde::omit_empty))
+                           (map, "objectFromMap", serde::with(serde::omit_empty))
+                           (inner, "object", serde::with(serde::omit_empty)))
 };
 
 // The `omit_empty` option chooses to behave like Java's jackson omit empty annotation, which
@@ -221,8 +221,8 @@ TEST_CASE("Omit non-trivial empty type when serialize a struct into JSON") {
 struct foobar_stringify_int {
     std::int64_t n{0};
 
-    NLOHMANN_SERDE_DERIVE_TYPE(foobar_stringify_int,
-                               (n, "n", serde::with(serde::stringify_int64)))
+    NLOHMANN_SERDE_DERIVED(foobar_stringify_int,
+                           (n, "n", serde::with(serde::stringify_int64)))
 };
 
 TEST_CASE("Stringify int64 value in serialization and convert back in deserialization") {
@@ -255,8 +255,8 @@ inline const stringify_with_default_value_t stringify_with_default_value;
 struct foobar_stringify_with_default {
     std::int64_t n{0};
 
-    NLOHMANN_SERDE_DERIVE_TYPE(foobar_stringify_with_default,
-                               (n, "n", serde::with(stringify_with_default_value)))
+    NLOHMANN_SERDE_DERIVED(foobar_stringify_with_default,
+                           (n, "n", serde::with(stringify_with_default_value)))
 };
 
 TEST_CASE("Use default value if error occurred in deserialization from string") {
