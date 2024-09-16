@@ -108,11 +108,11 @@ public:
         : filter_(filter),
           action_(action) {}
 
-    Filter& filter() const {
+    [[nodiscard]] const Filter& filter() const {
         return filter_;
     }
 
-    Action& action() const {
+    [[nodiscard]] const Action& action() const {
         return action_;
     }
 
@@ -131,7 +131,7 @@ public:
     explicit options(Filter filter)
         : filter_(filter) {}
 
-    const Filter& filter() const {
+    [[nodiscard]] const Filter& filter() const {
         return filter_;
     }
 
@@ -149,7 +149,7 @@ public:
     explicit options(Action action)
         : action_(action) {}
 
-    const Action& action() const {
+    [[nodiscard]] const Action& action() const {
         return action_;
     }
 
@@ -185,7 +185,7 @@ void serialize_with_opts(nlohmann::json& j,
                          const T& member_value,
                          options<Filter, Action> opts) {
     if constexpr (decltype(opts)::has_filter) {
-        if (bool skip = opts.filter().on_serialize(member_value); skip) {
+        if (const bool skip = opts.filter().on_serialize(member_value); skip) {
             return;
         }
     }
@@ -207,7 +207,7 @@ void deserialize_with_opts(const nlohmann::json& j,
     }
 
     if constexpr (decltype(opts)::has_filter) {
-        if (bool skip = opts.filter().on_deserialize(j[name]); skip) {
+        if (const bool skip = opts.filter().on_deserialize(j[name]); skip) {
             return;
         }
     }

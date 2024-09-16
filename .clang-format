@@ -41,4 +41,5 @@ WhitespaceSensitiveMacros: [NLOHMANN_SERDE_DERIVED]
 
 ---
 Language: Json
+IndentWidth: 4
 ...

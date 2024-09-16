@@ -36,7 +36,7 @@
             "binaryDir": "${sourceDir}/out/${presetName}",
             "toolchainFile": "$env{VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake",
             "cacheVariables": {
-                "NLOHMANN_JSON_SERDE_USE_SANITIZER": "ASAN",
+                "NLOHMANN_JSON_SERDE_USE_SANITIZER": "",
                 "NLOHMANN_JSON_SERDE_USE_CLANG_TIDY": "ON",
                 "NLOHMANN_JSON_SERDE_USE_MSVC_STATIC_ANALYSIS": "ON"
             },
